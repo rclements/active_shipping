@@ -320,6 +320,7 @@ The nicest way to submit changes would be to set up a GitHub account and fork th
 * Cody Fauser (<http://codyfauser.com>)
 * Jimmy Baker (<http://jimmyville.com/>)
 * William Lang (<http://williamlang.net/>)
+* Brian Webb (<http://parkersmithsoftware.com>)
 
 ## Legal Mumbo Jumbo
 
