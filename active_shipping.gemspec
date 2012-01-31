@@ -4,7 +4,7 @@ $:.unshift lib unless $:.include?(lib)
 require 'active_shipping/version'
 
 Gem::Specification.new do |s|
-  s.name        = "active_shipping"
+  s.name        = "rclements_active_shipping"
   s.version     = ActiveShipping::VERSION
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["James MacAulay", "Tobi Lutke", "Cody Fauser", "Jimmy Baker"]

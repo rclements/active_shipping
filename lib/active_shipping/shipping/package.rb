@@ -92,19 +92,7 @@ module ActiveMerchant #:nodoc:
       alias_method :mass, :weight
       
       def self.cents_from(money)
-        return nil if money.nil?
-        if money.respond_to?(:cents)
-          return money.cents
-        else
-          case money
-          when Float
-            (money * 100).to_i
-          when String
-            money =~ /\./ ? (money.to_f * 100).to_i : money.to_i
-          else
-            money.to_i
-          end
-        end
+        money
       end
   
       private
