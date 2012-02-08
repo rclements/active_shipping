@@ -1,3 +1,6 @@
+2012/02/08:
+Added reference number and invoice info to labels to previously added return label generation ability
+
 2011/04/21:
 * USPS updated to use new APIs [james]
 * new :gift boolean option for Package [james]
