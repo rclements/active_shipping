@@ -204,7 +204,9 @@ module ActiveMerchant
                 address << XmlNode.new("CountryCode", options[:destination][:country]) unless options[:destination][:country].blank?
                 address << XmlNode.new("ResidentialAddressIndicator", options[:destination][:residential_indicator]) unless options[:destination][:residential_indicator].blank?
               end
+
             end
+
             shipment << XmlNode.new('Service') do |shipment_service|
               shipment_service << XmlNode.new('Code', carrier_service || "14")
               shipment_service << XmlNode.new('Description', DEFAULT_SERVICES[carrier_service] || DEFAULT_SERVICES["14"])
@@ -222,6 +224,16 @@ module ActiveMerchant
                 package_node << XmlNode.new("PackagingType") do |packaging_type|
                   packaging_type << XmlNode.new("Code", '02')
                 end
+                package_node << XmlNode.new('ReferenceNumber') do |reference|
+                  reference << XmlNode.new("Code", 'PO')
+                  reference << XmlNode.new("Value", options[:reference_number])
+                end
+
+                package_node << XmlNode.new('ReferenceNumber') do |reference|
+                  reference << XmlNode.new("Code", 'PC')
+                  reference << XmlNode.new("Value", options[:return_description])
+                end
+
                 package_node << XmlNode.new("Dimensions") do |dimensions|
                   dimensions << XmlNode.new("UnitOfMeasurement") do |units|
                     units << XmlNode.new("Code", imperial ? 'IN' : 'CM')
@@ -328,10 +340,12 @@ module ActiveMerchant
             # not implemented: Shipment/Description element
             shipment << build_location_node('Shipper', (options[:shipper] || origin), options)
             shipment << build_location_node('ShipTo', destination, options)
+            
             if options[:shipper] and options[:shipper] != origin
               shipment << build_location_node('ShipFrom', origin, options)
             end
-            
+
+
             # not implemented:  * Shipment/ShipmentWeight element
             #                   * Shipment/ReferenceNumber element                    
             #                   * Shipment/Service element                            
@@ -416,7 +430,7 @@ module ActiveMerchant
           elsif name == 'ShipTo' and (destination_account = @options[:destination_account] || options[:destination_account])
             location_node << XmlNode.new('ShipperAssignedIdentificationNumber', destination_account)
           end
-          
+         
           location_node << XmlNode.new('Address') do |address|
             address << XmlNode.new("AddressLine1", location.address1) unless location.address1.blank?
             address << XmlNode.new("AddressLine2", location.address2) unless location.address2.blank?
@@ -492,6 +506,7 @@ module ActiveMerchant
             @shipment_packages << ShipmentPackage.new(tracking_number, label_image_format, graphic_image, html_image, {:service_option_charges => service_option_charges, :currency_code => service_option_charges_currency})
           end
           root_node = xml.elements['ShipmentAcceptResponse/ShipmentResults']
+          ref = root_node.get_text('Shipment/ReferenceNumber').to_s
           identification_number = root_node.get_text('ShipmentIdentificationNumber').to_s
           shipment_charges = root_node.get_text('ShipmentCharges/TotalCharges/MonetaryValue').to_s.to_f
           currency_code = root_node.get_text('ShipmentCharges/TotalCharges/CurrencyCode').to_s
@@ -513,7 +528,8 @@ module ActiveMerchant
           :weight_unit => weight_unit,
           :high_value_report_image => high_value_report_image,
           :high_value_report_image_format => high_value_report_image_format,
-          :shipment_packages => @shipment_packages
+          :shipment_packages => @shipment_packages,
+          :reference_number => ref
           )
       end
       
